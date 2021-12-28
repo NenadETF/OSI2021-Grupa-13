@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+
+int main()
+{
+	FILE *fp; 
+	int brojac = 3, uslov;  
+	char ime[30], sifra[30];
+	char buffer[50];
+	do {
+		uslov = 0;
+		printf("Korisnicko ime: "); fgets(ime, 30, stdin);  
+		printf("Sifra: "); fgets(sifra, 30, stdin); 
+		
+		// Provjera unosa
+		fp = fopen("korisnickinalozi.dat", "rb"); 
+		if(!fp) printf("Greska pri otvaranju datoteke.\n");     
+		else 
+		{
+			while(fgets(buffer, 20, fp)) 
+			{
+				if((strcmp(ime, buffer)) == 0) 
+				{ 
+					++uslov; 
+					continue;
+				}
+				else if((strcmp(sifra, buffer)) == 0) 
+				{												
+					++uslov;
+					break; 
+				}
+				else 
+				{
+					--brojac;
+					break; 
+				}
+			}
+			if(uslov == 2) { printf("Pristup omogucen.\n"); } 
+		}
+		if(brojac == 0) 
+		{
+			printf("Odbijen pristup.\n"); 
+			break;
+		}
+	} while(uslov != 2);
+	return 0;
+}
