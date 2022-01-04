@@ -1,0 +1,276 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+
+typedef struct korisnik 
+{
+    char k_ime[20];
+    char lozinka[10];
+    char ime[10];
+    char prezime[15];
+    char premium; // premium -> P, obicni -> O, admin -> A
+    int brojac; 
+} KOR;
+
+FILE* fp; 
+
+
+void login();
+void newline(); 
+void administrator();
+void nalog();
+void premuium();
+void napravinalog(); 
+int checkName(char*); 
+int checkPassword(char*);
+void umanji(char*); 
+
+
+int main() 
+{
+    login();
+    return 0; 
+}
+
+
+
+
+
+void login() 
+{
+    int brp = 3; 
+    int uslov;  
+    char uKIme[20], uLozinka[10], buffer[50];
+    char c; // Sluzi za prepoznanje da li je nalog obican ili premium
+    do {
+        uslov = 0; 
+        printf("Korisnicko ime: "); fgets(uKIme, 20, stdin); // Unos korisnickog imena 
+        printf("Lozinka: "); fgets(uLozinka, 10, stdin); // Unos sifre korisnickog naloga  
+        
+        // PROVJERA NALOGA ZA PRIJAVU
+        fp = fopen("korisnickinalozi.dat", "rb"); 
+        if(!fp) printf("Greska pri otvaranju datoteke.\n"); 
+        else 
+        {
+            KOR input; // Struktura u koju cemo skladistiti sve podatke koji se citaju iz datoteke
+            while(fread(&input, sizeof(KOR), 1, fp)) 
+            {
+                if((strncmp(uKIme, input.k_ime, strlen(input.k_ime))) == 0) // Provjera imena
+                {
+                    ++uslov;  
+                    c = input.premium; 
+                }
+                else continue; 
+                if((strncmp(uLozinka, input.lozinka, strlen(input.lozinka))) == 0) ++uslov; // Provjera lozinke
+                else 
+                {
+                    --brp; 
+                    break; 
+                }
+            }
+            if(uslov == 2) 
+            {                
+                newline();
+                newline();
+                printf("Pristup omogucen.\n"); 
+                newline();
+                newline();
+                newline();
+                if(c == 'A') 
+                {
+                    umanji(input.k_ime);
+                    administrator();
+                }
+                else if(c == 'P') 
+                {
+                    printf("Treba se pokrenuti premium funkcija.\n");
+                }
+                else 
+                {
+                    printf("Treba se pokrenuti nalog funkcija.\n");
+                }
+                fclose(fp);
+            }
+        }
+        if(brp == 0)
+        {
+            printf("Odbijen pristup.\n"); 
+            break; 
+        }
+    } while(uslov != 2);
+    fclose(fp);
+}
+
+
+
+
+
+
+void newline() 
+{
+    printf("\n");
+}
+
+
+
+
+
+
+
+
+void administrator() 
+{
+    int unos;
+    do {
+        // UNOS PODATAKA 
+        printf("=================================================================================\n");
+        printf("1: Pravljenje naloga\n");
+        printf("2: Pregled naloga\n");
+        printf("3: Brisanje naloga\n");
+        printf("0: Odjava\n");
+        printf("=================================================================================\n");
+        printf("Unesite opciju: "); scanf("%d", &unos);
+        getchar();
+        if(unos == 1) napravinalog();
+        else if(unos == 2) { printf("Pregled naloga\n"); }
+        else if(unos == 3) { printf("Brisanje naloga\n"); }
+        else printf("Pogresan unos.\n");
+    } while(unos != 0);
+    newline();
+    newline();
+    newline();
+    login();
+}
+
+
+
+
+
+
+
+
+
+// PRAVLJENJE NALOGA
+void napravinalog() 
+{
+    // UNOS PODATAKA
+    KOR nalog; 
+    nalog.brojac = 20;
+    int unos;
+    printf("=================================================================================\n");
+    printf("Ime: "); fgets(nalog.ime, 10, stdin); 
+    printf("Prezime: "); fgets(nalog.prezime, 15, stdin); 
+    int cName, cPass; // za provjeru validnosti korisnickog imena i sifre
+    
+    
+    do {
+        printf("Korisnicko ime: "); fgets(nalog.k_ime, 20, stdin);
+        cName = checkName(nalog.k_ime);
+    } while(cName < 0);
+    
+    
+    do {
+        printf("Lozinka: "); fgets(nalog.lozinka, 10, stdin);
+        cPass = checkPassword(nalog.lozinka);
+    } while(cPass < 0);
+    
+    
+    printf("=================================================================================\n");
+    printf("0: Obicni nalog\n");
+    printf("1: Premium nalog\n");
+    printf("=================================================================================\n");
+    printf("Unesite opciju: "); scanf("%d", &unos);
+    if(unos == 0) nalog.premium = 'O'; 
+    else if(unos == 1) nalog.premium = 'P'; 
+    
+    
+    // DODAVANJE U DATOTEKU
+    fp = fopen("korisnickinalozi.dat", "ab");
+    if(!fp) printf("Greska pri otvaranju datoteke.\n");
+    else 
+    {
+        if(fwrite(&nalog, sizeof(KOR), 1, fp)) 
+        {
+            printf("Nalog uspjesno napravljen.\n");
+            fclose(fp);
+            return;
+        }
+    }
+    fclose(fp);
+}
+
+
+
+
+
+// PROVJERA VALIDNOSTI KORISNICKOG IMENA
+int checkName(char* name) 
+{
+    KOR input; 
+    fp = fopen("korisnickinalozi.dat", "rb"); 
+    if(!fp) printf("Greska pri otvaranju datoteke.\n");
+    else 
+    {
+        while(fread(&input, sizeof(KOR), 1, fp)) 
+        {
+            if((strncmp(name, input.k_ime, strlen(input.k_ime))) == 0) 
+            {
+                newline();
+                printf("Korisnicko ime vec postoji. Pokusajte ponovo.\n");
+                newline();
+                return -1;
+            }
+        }
+    }
+    fclose(fp);
+    return 1;
+}
+
+
+// PROVJERA VALIDNOSTI LOZINKE
+int checkPassword(char* pass) // do while petlja sa % za dobijanje ostatka koji je char
+{
+    if(strlen(pass) > 7 || strlen(pass) < 7) 
+    {
+        newline();
+        printf("Lozinka treba da sadrzi tacno 6 cifara.\n");
+        newline();
+        return -1;
+    }
+    else 
+    {
+        for(int i = 0; i < strlen(pass) - 1; i++) 
+        {
+            if(pass[i] < '0' || pass[i] > '9') 
+            {
+                newline();
+                printf("Lozinka treba da sadrzi iskljucivo cifre.\n");
+                newline();
+                return -1;
+            }
+        }
+        return 1;
+    }
+}
+
+
+
+
+
+void umanji(char* name) 
+{
+    KOR input;
+    fp = fopen("korisnickinalozi.dat", "rb"); 
+    if(!fp) printf("Greska pri otvaranju datoteke.\n");
+    else 
+    {
+        while(fread(&input, sizeof(KOR), 1, fp)) 
+        {
+            if(strncmp(name, input.k_ime, strlen(input.k_ime)) == 0) 
+                --input.brojac;
+                if(input.brojac == 0) { /* Funkcija za mijenjanje sifre (funckionisace tako sto ce obrisati podaci tog naloga iz datoteke 
+                                        i ponovo dodati u datoteku */ }
+        }
+    }
+}
