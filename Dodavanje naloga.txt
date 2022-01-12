@@ -25,13 +25,41 @@ void napravinalog();
 int checkName(char*);
 int checkPassword(char*);
 void umanji(char*);
-
+void napravidirektorijum ();
+int izbrisinalog(char *ime_fajla,char *kljuc);
 
 int main()
 {
     login();
     return 0;
 }
+
+void napravidirektorijum () //Funkcija za pravljenje direktorijuma //
+{
+    int provjera;
+    char imedir [50];
+
+    printf("Unesite ime direktorijuma koji zelite napraviti :");
+    scanf("%s",&imedir);
+    if (isupper(imedir[0])==0 && isdigit(imedir[0])==0){
+        printf("Prvo slovo naziva nije veliko ili broj , pokusajte ponovo.\n");
+        napravidirektorijum();}
+else {
+    provjera=mkdir(imedir);
+    if( !provjera)
+      printf("Direktorijum je napravljen.");
+
+    else {
+        printf("Direktorijum nije uspjesno napravljen ,jer vec postoji direktorijum sa datim nazivom.\nPokusajte ponovo.\n");
+        napravidirektorijum();
+     }
+
+
+     }
+}
+
+
+
 
 int izbrisinalog (char *ime_fajla,char *kljuc)
 {
