@@ -59,6 +59,28 @@ else {
 }
 
 
+// FUNKCIJA ZA BRISANJE DIREKTORIJUMA//
+
+
+void brisanje_direktorijuma ()
+ {
+     int rezultat=0;
+     char direktorijum [30];
+     char cmd [30];
+     printf("Unesite ime direktorijuma koji zelite da izbrisete: ");
+    scanf("%s", direktorijum);
+    sprintf(cmd, "rmdir %s", direktorijum);
+     // printf("Ovo je komanda: %s\n", cmd);
+    rezultat = system(cmd);
+
+    if (rezultat == 0)
+        printf("Uspjesno je izbrisan.\n");
+    else
+        printf("Brisanje nije uspjelo jer ne postiji unijeti direktorijum.\n");
+
+    }
+
+
 
 
 int izbrisinalog (char *ime_fajla,char *kljuc)
