@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+typedef struct korisnik{char ime[21], prezime[21], sifara[7];} KORISNIK;
+int promena_lozinke(KORISNIK k, int broj_prijava) /*broj_prijava je broj koliko se kotisnik puta prijavio na sistem sa istom lozinkom*/
+{
+    char lozinka[7];
+    if(broj_prijava>7)
+    {
+        do
+        {
+        printf("Morate promeniti lozinku, jer ste se prijavili vise od 7 puta na istu lozinku\n");
+        printf("Unesite novu lozinku:  ");
+        scanf("%s", lozinka);
+        } while((strcmp(k.sifara, lozinka))==0);
+        strcpy(k.sifara, lozinka);
+        if(strcmp(lozinka, k.sifara)==0)
+        {
+            printf("Lozinka je uspesno promenjena!\n");
+            return 1;
+        }
+        else
+        {
+            printf("Lozinka njie promenjena uspesno!\n");
+            return -1;
+        }
+    }
+    else
+    {
+        printf("Lozinku nema potrebe menjati!\n");
+        return -1;
+    }
+
+}
+
+
