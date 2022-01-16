@@ -385,3 +385,38 @@ void brisanje_direktorijuma ()
         printf("Brisanje nije uspjelo jer ne postiji unijeti direktorijum.\n");
 
     }
+//FUNKCIJA ZA PREGLED DIREKTORIJUMA //
+
+void pregled_direktorijuma ()
+{
+    char  ime_direktorijuma [30];
+    printf("Unesite ime direktorijuma koji zelite da pregledate : ");
+    scanf("%s" ,&ime_direktorijuma);
+
+     DIR *direktorijum;
+      struct dirent *ulazak;
+    int fajlovi = 0;
+
+    direktorijum = opendir(ime_direktorijuma);
+    if(direktorijum == NULL)
+    {
+        printf("Nije moguce pregledati direktorijum , pokusajte sa drugim nazivom.");
+        pregled_direktorijuma();
+    }
+
+    while( (ulazak=readdir(direktorijum)) )
+    {
+        fajlovi++;
+        printf("Fajl %3d: %s\n",
+                fajlovi,
+                ulazak->d_name
+              );
+    }
+
+    closedir(direktorijum);
+
+}
+
+
+
+
