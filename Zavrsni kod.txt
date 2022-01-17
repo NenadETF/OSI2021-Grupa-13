@@ -7,8 +7,6 @@
 #include <unistd.h>
 #include <dirent.h>
 
-
-
 typedef struct korisnik 
 {
     char k_ime[20];
@@ -25,6 +23,7 @@ FILE* fp;
 void login();
 void newline(); 
 void administrator();
+void osnovni_nalog();
 void nalog();
 void premuium();
 void napravinalog(); 
@@ -33,6 +32,13 @@ int checkPassword(char*);
 void umanji(char*); 
 void pregled_korisnika_iz_datoteke();
 void brisanje_naloga();
+void napravi_direktorijum();
+void brisanje_direktorijuma();
+void pregled_direktorijuma();
+void kreiraj_fajl();
+void obrisi_fajl();
+void kopiranje_fajlova();
+int provjeri_direktorijum(char*, char*);
 
 
 int main() 
@@ -93,11 +99,11 @@ void login()
                 }
                 else if(c == 'P') 
                 {
-                    printf("Treba se pokrenuti premium funkcija.\n");
+                    premium_nalog();
                 }
                 else 
                 {
-                    printf("Treba se pokrenuti nalog funkcija.\n");
+                    osnovni_nalog();
                 }
             }
         }
@@ -141,9 +147,75 @@ void administrator()
         printf("Unesite opciju: "); scanf("%d", &unos);
         getchar();
         if(unos == 1) napravinalog(); 
-        else if(unos == 2) {pregled_korisnika_iz_datoteke();} // DATOTEKA JE I DALJE ZATVORENA
-        else if(unos == 3) {brisanje_naloga();} // DATOTEKA JE I DALJE ZATVORENA
-        else if(unos==0) { printf("Odjavljeni ste.");}
+        else if(unos == 2) pregled_korisnika_iz_datoteke(); 
+        else if(unos == 3) brisanje_naloga(); 
+	else if(unos==0) { printf("Odjavljeni ste.");}
+        else printf("Pogresan unos.\n");
+    } while(unos != 0);
+    newline();
+    newline();
+    newline();
+    login();
+}
+
+void osnovni_nalog() 
+{
+    int unos;
+    do {
+        // UNOS PODATAKA 
+        printf("=================================================================================\n");
+        printf("1: Pravljenje direktorijuma\n");
+        printf("2: Pregled direktorijuma\n");
+        printf("3: Brisanje direktorijuma\n");
+        printf("4: Kreiranje fajla\n");
+        printf("5: Brisanje fajla\n");
+        printf("6: Kopiranje fajlova\n");
+        printf("0: Odjava\n");
+        printf("=================================================================================\n");
+        printf("Unesite opciju: "); scanf("%d", &unos);
+        getchar();
+        if(unos == 1) napravi_direktorijum(); 
+        else if(unos == 2) pregled_direktorijuma(); 
+        else if(unos == 3) brisanje_direktorijuma(); 
+        else if(unos == 4) kreiraj_fajl();
+        else if(unos == 5) obrisi_fajl();
+        else if(unos == 6) kopiranje_fajlova();
+	else if(unos==0) { printf("Odjavljeni ste.");}
+        else printf("Pogresan unos.\n");
+    } while(unos != 0);
+    newline();
+    newline();
+    newline();
+    login();
+}
+
+void premium_nalog() 
+{
+    int unos;
+    do {
+        // UNOS PODATAKA 
+        printf("=================================================================================\n");
+        printf("1: Pravljenje direktorijuma\n");
+        printf("2: Pregled direktorijuma\n");
+        printf("3: Brisanje direktorijuma\n");
+        printf("4: Kreiranje fajla\n");
+        printf("5: Brisanje fajla\n");
+        printf("6: Kopiranje fajlova\n");
+        printf("7: Statistika\n");
+	printf("8: Kopiranje direktorijuma\n");
+        printf("0: Odjava\n");
+        printf("=================================================================================\n");
+        printf("Unesite opciju: "); scanf("%d", &unos);
+        getchar();
+        if(unos == 1) napravi_direktorijum(); 
+        else if(unos == 2) pregled_direktorijuma(); 
+        else if(unos == 3) brisanje_direktorijuma(); 
+        else if(unos == 4) kreiraj_fajl();
+        else if(unos == 5) obrisi_fajl();
+        else if(unos == 6) kopiranje_fajlova();
+        else if(unos == 7) { printf("Funkcija za statistiku.\n"); }
+	else if(unos == 8) { printf("Funkcija za kopiranje foldera.\n"); }
+	else if(unos==0) { printf("Odjavljeni ste.");}
         else printf("Pogresan unos.\n");
     } while(unos != 0);
     newline();
@@ -305,11 +377,6 @@ void pregled_korisnika_iz_datoteke()
     }
 }
 
-
-
-
-
-
 void brisanje_naloga() 
 {
     KOR preuzmi;
@@ -347,23 +414,26 @@ void brisanje_naloga()
 
 
 
-
+// FUNKCIJA ZA PRAVLJENJE DIREKTORIJUMA
 void napravi_direktorijum() //Funkcija za pravljenje direktorijuma //
 {
-    char imedir [50];
+    char imedir[20];
 
-    printf("Unesite ime direktorijuma koji zelite napraviti :");
-    fgets(imedir, 50, stdin);
+    printf("Unesite ime direktorijuma koji zelite napraviti: ");
+    scanf("%s", imedir);
     
-    if (isupper(imedir[0]) == 0 && isdigit(imedir[0]) == 0){
-        printf("Prvo slovo naziva ne smije biti veliko ili broj, pokusajte ponovo.\n");
-        napravi_direktorijum();}
-    else {
+    if (isupper(imedir[0]) == 0 && isdigit(imedir[0]) == 0) // Provjera ispravnosti unijetog naziva
+    {
+        printf("Prvo slovo naziva mora pocinjati velikim slovom ili cifrom.\n");
+        napravi_direktorijum(); // Ako nije ispravan, ponovo se poziva funkcija
+    }
+    else 
+    {
         int provjera = mkdir(imedir);
-        if(!provjera)
-            printf("Direktorijum je napravljen.");
-        else {
-            printf("Direktorijum nije uspjesno napravljen ,jer vec postoji direktorijum sa datim nazivom.\nPokusajte ponovo.\n");
+        if(!provjera) printf("Direktorijum uspjesno kreiran.\n");
+        else 
+        {
+            printf("Greska pri kreiranju direktorijuma.\n");
             napravi_direktorijum();
         }
     }
@@ -373,11 +443,11 @@ void napravi_direktorijum() //Funkcija za pravljenje direktorijuma //
 
 // FUNKCIJA ZA BRISANJE DIREKTORIJUMA//
 void brisanje_direktorijuma ()
- {
-     int rezultat=0;
-     char direktorijum [30];
-     char cmd [30];
-     printf("Unesite ime direktorijuma koji zelite da izbrisete: ");
+{
+    int rezultat = 0;
+    char direktorijum[20];
+    char cmd[30];
+    printf("Unesite ime direktorijuma koji zelite da izbrisete: ");
     scanf("%s", direktorijum);
     sprintf(cmd, "rmdir %s", direktorijum);
      // printf("Ovo je komanda: %s\n", cmd);
@@ -387,40 +457,287 @@ void brisanje_direktorijuma ()
         printf("Uspjesno je izbrisan.\n");
     else
         printf("Brisanje nije uspjelo jer ne postiji unijeti direktorijum.\n");
-
-    }
-//FUNKCIJA ZA PREGLED DIREKTORIJUMA //
-
-void pregled_direktorijuma ()
-{
-    char  ime_direktorijuma [30];
-    printf("Unesite ime direktorijuma koji zelite da pregledate : ");
-    scanf("%s" ,&ime_direktorijuma);
-
-     DIR *direktorijum;
-      struct dirent *ulazak;
-    int fajlovi = 0;
-
-    direktorijum = opendir(ime_direktorijuma);
-    if(direktorijum == NULL)
-    {
-        printf("Nije moguce pregledati direktorijum , pokusajte sa drugim nazivom.");
-        pregled_direktorijuma();
-    }
-
-    while( (ulazak=readdir(direktorijum)) )
-    {
-        fajlovi++;
-        printf("Fajl %3d: %s\n",
-                fajlovi,
-                ulazak->d_name
-              );
-    }
-
-    closedir(direktorijum);
-
 }
 
 
 
+// FUNKCIJA ZA PREGLED DIREKTORIJUMA
+void pregled_direktorijuma() 
+{
+    struct dirent* ulazak; // Pokazivac na tok
+    char ime_dir[20];
+    
+    printf("Unesite ime direktorijuma kojeg zelite pregledati: "); scanf("%s", ime_dir);
+    int fajlovi = 0; 
+    
+    DIR* dir = opendir(ime_dir);
+    if(dir == NULL) 
+    {
+        printf("Direktorijum sa unesenim nazivom ne postoji. Pokusajte ponovo.\n");
+        pregled_direktorijuma();
+    }
+    
+    while((ulazak = readdir(dir))) 
+    {
+        fajlovi++;
+        printf("Fajl %d: %s\n", fajlovi, ulazak->d_name);
+    }
+    closedir(dir);
+}
 
+
+// FUNKCIJA ZA KREIRANJE FAJLA
+void kreiraj_fajl() 
+{
+    char* name = (char*)malloc(20*sizeof(char));
+    char* dir_name = (char*)malloc(80*sizeof(char));
+    char* full_name = (char*)malloc(120*sizeof(char));
+    printf("Unesite ime fajla: "); fgets(name, 20, stdin);
+    
+    if(isupper(name[0]) && isdigit(name[0])) 
+    {
+        printf("Prvo slovo imena mora biti veliko ili moze da bude cifra. Pokusajte ponovo.\n");
+        kreiraj_fajl();
+    }
+    
+    int len = strlen(name);
+    const char* last_four = &name[len - 5];
+    
+    if(strncmp(last_four, ".txt", 4) != 0) 
+    {
+        printf("Fajl mora da sadrzi ekstenziju .txt\n");
+        kreiraj_fajl();
+    }
+    
+    printf("Unesite putanju direktorijuma: "); scanf("%s", dir_name); // Unos putanje do direktorijuma
+    
+    int rez = provjeri_direktorijum(dir_name, name);
+    if(rez < 0) 
+    {
+        free(name); free(dir_name); free(full_name);  // Oslobodi memoriju
+        kreiraj_fajl(); // Ako se pojavi bilo kakva greska, ponovice se funkcija
+    }
+    
+    strtok(name, "\n");
+    strtok(dir_name, "\n");
+    strcpy(full_name, dir_name);
+    strcat(full_name, "\\");
+    strcat(full_name, name);
+    
+    
+    FILE* dat = fopen(full_name, "w");
+    if(dat) printf("Datoteka ubacena.\n");
+    if(!dat) printf("Datoteka nije ubacena.\n");
+
+    
+    free(name); free(dir_name); free(full_name);
+    fclose(dat);
+}
+
+
+
+int provjeri_direktorijum(char* dir_name, char* file_name) 
+{
+    struct dirent* entry; 
+    DIR* dir = opendir(dir_name);
+    if(dir == NULL) 
+    {
+        printf("Direktorijum sa tim imenom ne postoji.\n");
+        return -1;
+    }
+    if(dir) printf("Direktorijum postoji.\n");
+    newline();
+    while((entry = readdir(dir)))
+    {
+        if(strcmp(file_name, entry->d_name) == 0) 
+        {
+            printf("Fajl sa tim imenom već postoji.\n");
+            closedir(dir);
+            return -1;
+        }
+    }
+    closedir(dir);
+    return 1;
+}
+
+
+
+// FUNKCIJA ZA BRISANJE FAJLA
+void obrisi_fajl()
+{
+    struct dirent* ulazak;
+    DIR* dir; 
+    char* ime_fajla = (char*)malloc(20*sizeof(char));
+    char* dir_ime = (char*)malloc(80*sizeof(char));
+    char* puno_ime = (char*)malloc(120*sizeof(char));
+    
+    printf("Unesite ime fajla koji zelite da izbrisete: "); //Kada unosite ime fajla, unesite ga u obliku ime_fajla.txt
+    gets(ime_fajla);
+    strtok(ime_fajla, "\n"); // Uklanjamo novi red kako bi fopen primila argument
+    
+
+
+    // Provjera validnosti
+    if(isupper(ime_fajla[0]) && isdigit(ime_fajla[0])) 
+    {
+        printf("Prvo slovo imena mora biti veliko ili moze da bude cifra. Pokusajte ponovo.\n");
+        free(ime_fajla); free(dir_ime); free(puno_ime);
+        obrisi_fajl();
+    }
+    
+    int len = strlen(ime_fajla);
+    const char* last_four = &ime_fajla[len - 4];
+    
+    if(strncmp(last_four, ".txt", 4) != 0) 
+    {
+        printf("Fajl mora da sadrzi ekstenziju .txt\n");
+        free(ime_fajla); free(dir_ime); free(puno_ime);
+        obrisi_fajl();
+    }
+    
+    
+    
+    
+    printf("Unesite putanju foldera: "); fgets(dir_ime, 80, stdin);
+    strtok(dir_ime, "\n");
+    
+    strcpy(puno_ime, dir_ime);
+    strcat(puno_ime, "\\");
+    strcat(puno_ime, ime_fajla);
+    
+    
+    // Otvaranje direktorijuma i provjera postojanja unesenog fajla
+    dir = opendir(dir_ime);
+    if(dir == NULL) 
+    {
+        printf("Uneseni direktorijum ne postoji.\n");
+        free(ime_fajla); free(dir_ime); free(puno_ime);
+        obrisi_fajl();
+    }
+    while((ulazak = readdir(dir))) 
+    {
+        if(strcmp(ime_fajla, ulazak->d_name) == 0) 
+        {
+            remove(puno_ime);
+            printf("Datoteka uspjesno uklonjena\n");
+            free(ime_fajla); free(dir_ime); free(puno_ime);
+            return;
+        }
+    }
+    printf("Datoteka koju ste unijeli ne postoji u folderu.\n");
+    free(ime_fajla); free(dir_ime); free(puno_ime);
+    obrisi_fajl();
+ }
+
+
+
+
+
+
+
+// FUNKCIJA ZA KOPIRANJE FAJLOVA
+void kopiranje_fajlova() 
+{
+    struct dirent* entry;
+    DIR* dir;
+    char* name = (char*)malloc(20*sizeof(char));
+    char* dir_name = (char*)malloc(80*sizeof(char));
+    char* full_name = (char*)malloc(120*sizeof(char));
+    
+    printf("Unesite ime fajla kojeg zelite kopirati: "); scanf("%s", name);
+    strtok(name, "\n");
+    printf("Unesite putanju foldera u kojem se taj fajl nalazi: "); scanf("%s", dir_name);
+    strtok(dir_name, "\n");
+    
+    
+    
+    
+    // Provjera validnosti
+    if(isupper(name[0]) && isdigit(name[0])) 
+    {
+        printf("Prvo slovo imena mora biti veliko ili moze da bude cifra. Pokusajte ponovo.\n");
+        free(name); free(dir_name); free(full_name);
+        kopiranje_fajlova();
+    }
+    
+    int len = strlen(name);
+    const char* last_four = &name[len - 4];
+    
+    if(strncmp(last_four, ".txt", 4) != 0 && strncmp(last_four, ".dat", 4)) 
+    {
+        printf("Fajl mora da sadrzi ekstenziju .txt ili .dat\n");
+        free(name); free(dir_name); free(full_name);
+        kopiranje_fajlova();
+    }
+    
+    
+    strcpy(full_name, dir_name);
+    strcat(full_name, "\\");
+    strcat(full_name, name);
+    
+    
+    
+    
+    // Otvaranje direktorijuma i provjera postojanja unesenog fajla
+    dir = opendir(dir_name);
+    if(dir == NULL) 
+    {
+        printf("Uneseni direktorijum ne postoji.\n");
+        free(name); free(dir_name); free(full_name);
+        kopiranje_fajlova();
+    }
+    while((entry = readdir(dir))) 
+    {
+        if(strcmp(name, entry->d_name) == 0) 
+        {
+            if(strcmp(last_four, ".txt") == 0) 
+            {
+                FILE* fin = fopen(full_name, "r"); 
+                char* newPath = (char*)malloc(80*sizeof(char));
+                char* newFullPath = (char*)malloc(120*sizeof(char));
+                printf("Unesite novu putanju: "); scanf("%s", newPath);
+                strtok(newPath, "\n");
+                
+                strcpy(newFullPath, newPath);
+                strcat(newFullPath, "\\");
+                strcat(newFullPath, name);
+                
+                FILE* fout = fopen(newFullPath, "w");
+                char c = fgetc(fin);
+                while(c != EOF) 
+                {
+                    fputc(c, fout);
+                    c = fgetc(fin);
+                }
+                fclose(fin); fclose(fout);
+                free(newPath); free(newFullPath);
+            }
+            else 
+            {
+                FILE* fin = fopen(full_name, "rb"); 
+                char* newPath = (char*)malloc(80*sizeof(char));
+                char* newFullPath = (char*)malloc(120*sizeof(char));
+                printf("Unesite novu putanju: "); scanf("%s", newPath);
+                strtok(newPath, "\n");
+                
+                strcpy(newFullPath, newPath);
+                strcat(newFullPath, "\\");
+                strcat(newFullPath, name);
+                
+                FILE* fout = fopen(newFullPath, "wb");
+                KOR input;
+                while((fread(&input, sizeof(KOR), 1, fin))) 
+                {
+                    fwrite(&input, sizeof(KOR), 1, fout);
+                }
+                fclose(fin); fclose(fout);
+                free(newPath); free(newFullPath);
+            }
+            free(name); free(dir_name); free(full_name);
+            return;
+        }
+    }
+    printf("Datoteka koju ste unijeli ne postoji.\n");
+    free(name); free(dir_name); free(full_name);
+    kopiranje_fajlova();
+}
