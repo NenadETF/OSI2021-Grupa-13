@@ -420,6 +420,21 @@ void pregled_direktorijuma ()
 
 }
 
+//Funkcija za brisanje txt fajla//
 
+ void brisanje_txt_fajla ()
+ {
+     char ime_fajla [20] ;
+     printf("Unesite ime fajla koji zelite da izbrisete :"); //Kada unosite ime fajla, unesite ga u obliku ime_fajla.txt
+     gets(ime_fajla);
+     if (remove(ime_fajla) == 0) {
+        printf("Fajl je uspjesno izbrisan.\n");
+        printf("%d" , sizeof(ime_fajla));
+    } else {
+        printf("Uneseni fajl ne postoji.Pokusajte ponovo : \n");
+        brisanje_txt_fajla();
+
+    }
+ }
 
 
