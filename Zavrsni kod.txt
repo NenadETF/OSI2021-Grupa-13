@@ -141,8 +141,9 @@ void administrator()
         printf("Unesite opciju: "); scanf("%d", &unos);
         getchar();
         if(unos == 1) napravinalog(); 
-        else if(unos == 2) pregled_korisnika_iz_datoteke(); // DATOTEKA JE I DALJE ZATVORENA
-        else if(unos == 3) brisanje_naloga(); // DATOTEKA JE I DALJE ZATVORENA
+        else if(unos == 2) {pregled_korisnika_iz_datoteke();} // DATOTEKA JE I DALJE ZATVORENA
+        else if(unos == 3) {brisanje_naloga();} // DATOTEKA JE I DALJE ZATVORENA
+        else if(unos==0) { printf("Odjavljeni ste.");}
         else printf("Pogresan unos.\n");
     } while(unos != 0);
     newline();
@@ -420,21 +421,6 @@ void pregled_direktorijuma ()
 
 }
 
-//Funkcija za brisanje txt fajla//
 
- void brisanje_txt_fajla ()
- {
-     char ime_fajla [20] ;
-     printf("Unesite ime fajla koji zelite da izbrisete :"); //Kada unosite ime fajla, unesite ga u obliku ime_fajla.txt
-     gets(ime_fajla);
-     if (remove(ime_fajla) == 0) {
-        printf("Fajl je uspjesno izbrisan.\n");
-        printf("%d" , sizeof(ime_fajla));
-    } else {
-        printf("Uneseni fajl ne postoji.Pokusajte ponovo : \n");
-        brisanje_txt_fajla();
-
-    }
- }
 
 
